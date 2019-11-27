@@ -1,0 +1,70 @@
+#include <iostream>
+#include <cstdlib>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Card {
+public:
+	char m_char;
+	int m_num;
+	Card(const char s = 'S', const int n = 0) : m_char(s), m_num(n) {}
+	friend ostream& operator<<(ostream, const Card&);
+};
+
+ostream& operator<<(ostream o, const Card& c){
+	o << c.m_char;
+	switch (c.m_num) {
+	case 1: o << 'A'; break;
+	case 11: o << 'J'; break;
+	case 12: o << 'Q'; break;
+	case 13: o << 'K'; break;
+	default: o << c.m_num;
+	}
+	return o;
+}
+
+class Player {
+public:
+	string m_name;
+	vector<Card> m_deck;
+	Player(const string& n = "") : m_name(n) { m_deck.reserve(7); }
+	void push_back(const Card& c) { m_deck.push_back(c); }
+	friend ostream& operator<<(ostream&, const Player& p);
+};
+ostream& operator<<(ostream& o, const Player& p){
+	o << "Hint: " << p.m_name << "has ";
+	for (int i = 0, len = p.m_deck.size(); i < len; ++i) {
+		o << p.m_deck[i] << " ";            // This line has a error
+	}
+	return o;
+}
+
+int main(){
+
+	vector<Card> deck; deck.reserve(52);
+	for (int i = 1; i <= 13; ++i) deck.push_back(Card('S', i));
+	for (int i = 1; i <= 13; ++i) deck.push_back(Card('C', i));
+	for (int i = 1; i <= 13; ++i) deck.push_back(Card('D', i));
+	for (int i = 1; i <= 13; ++i) deck.push_back(Card('H', i));
+	random_shuffle(deck.begin(), deck.end());
+
+	vector<Player> players;
+	players.push_back(Player("player 0"));
+	players.push_back(Player("player 1"));
+	players.push_back(Player("player 2"));
+	players.push_back(Player("player 3"));
+	players.push_back(Player("player 4"));
+	
+	for (int i = 0, len = players.size(); i < len; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			Card c = deck.back();
+			players[i].push_back(c);
+			deck.pop_back();
+		}
+	}
+	for (int i = 0, len = players.size(); i < len; ++i)
+		cout << players[i] << endl;
+
+	return 0;
+}
