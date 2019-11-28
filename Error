@@ -1,0 +1,128 @@
+#include <iostream>
+#include <cstdlib>
+#include <vector>
+#include <algorithm>
+#include <string>
+using namespace std;
+
+class Card {
+public:
+	char m_char;
+	int m_num;
+	Card(const char s = 'S', const int n = 0) : m_char(s), m_num(n) {}
+	friend ostream& operator<<(ostream&, const Card&);
+};
+
+ostream& operator<<(ostream& o, const Card& c) {
+	o << c.m_char;
+	switch (c.m_num) {
+	case 1: o << 'A'; break;
+	case 11: o << 'J'; break;
+	case 12: o << 'Q'; break;
+	case 13: o << 'K'; break;
+	default: o << c.m_num;
+	}
+	return o;
+}
+
+class Player {
+public:
+	string m_name;
+	vector<Card> m_deck;
+	Player(const string& n = "") : m_name(n) { m_deck.reserve(7); }
+	void push_back(const Card& c) { m_deck.push_back(c); }
+	friend ostream& operator<<(ostream&, const Player& p);
+};
+ostream& operator<<(ostream& o, const Player& p) {
+	o << "Player " << p.m_name << " ";
+	for (int i = 0, len = p.m_deck.size(); i < len; ++i) {
+		o << p.m_deck[i] << " ";
+	}
+	return o;
+}
+
+int main() {
+	char ent;
+
+	vector<Card> deck; deck.reserve(52);
+	for (int i = 1; i <= 13; ++i) deck.push_back(Card('S', i));
+	for (int i = 1; i <= 13; ++i) deck.push_back(Card('C', i));
+	for (int i = 1; i <= 13; ++i) deck.push_back(Card('D', i));
+	for (int i = 1; i <= 13; ++i) deck.push_back(Card('H', i));
+	random_shuffle(deck.begin(), deck.end());
+
+	vector<Player> players;
+	players.push_back(Player("0"));
+	players.push_back(Player("1"));
+	players.push_back(Player("2"));
+	players.push_back(Player("3"));
+	players.push_back(Player("4"));
+
+	for (int i = 0, len = players.size(); i < len; ++i) {
+		for (int j = 0; j < 7; ++j) {
+			Card c = deck.back();
+			players[i].push_back(c);
+			deck.pop_back();
+		}
+	}
+	cout << players[0] << endl;
+	while (true) {
+		while (true) {
+			cout << "Which one to replace? ";
+			cin >> ent;
+			if (ent == '?') {
+				for (int i = 0, len = players.size(); i < len; ++i)
+					cout << players[i] << endl;
+			}
+			if (ent == 'a' || ent == 'b' || ent == 'c' || ent == 'd' || ent == 'e' || ent == 'f' || ent == 'g')
+				break;
+			if (ent != 'a' && ent != 'b' && ent != 'c' && ent != 'd' && ent != 'e' && ent != 'f' && ent != 'g' && ent != '?')
+				cout << "Wrong input! ";
+		}
+		if (ent == 'a') {
+			players[1].push_back(players[0].m_deck[0]);
+			players[0].m_deck.erase(players[0].m_deck.begin());
+		}
+		if (ent == 'b') {
+			players[1].push_back(players[0].m_deck[1]);
+			players[0].m_deck.erase(players[0].m_deck.begin() + 1);
+		}
+		if (ent == 'c') {
+			players[1].push_back(players[0].m_deck[2]);
+			players[0].m_deck.erase(players[0].m_deck.begin() + 2);
+		}
+		if (ent == 'd') {
+			players[1].push_back(players[0].m_deck[3]);
+			players[0].m_deck.erase(players[0].m_deck.begin() + 3);
+		}
+		if (ent == 'e') {
+			players[1].push_back(players[0].m_deck[4]);
+			players[0].m_deck.erase(players[0].m_deck.begin() + 4);
+		}
+		if (ent == 'f') {
+			players[1].push_back(players[0].m_deck[5]);
+			players[0].m_deck.erase(players[0].m_deck.begin() + 5);
+		}
+		if (ent == 'g') {
+			players[1].push_back(players[0].m_deck[6]);
+			players[0].m_deck.erase(players[0].m_deck.begin() + 6);
+		}
+		char spades = 'S', hearts = 'H', clubs = 'C', diamonds = 'D';
+
+		for (int i = 1; i < 5; ++i) {
+			int freqS = count(players[i].m_deck.begin(), players[i].m_deck.end(), spades);
+			int freqH = count(players[i].m_deck.begin(), players[i].m_deck.end(), hearts);
+			int freqC = count(players[i].m_deck.begin(), players[i].m_deck.end(), clubs);
+			int freqD = count(players[i].m_deck.begin(), players[i].m_deck.end(), diamonds);
+		}
+		
+
+		cout << players[0] << players[1] << endl;
+
+	}
+	
+	
+	
+
+	return 0;
+}
